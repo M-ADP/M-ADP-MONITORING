@@ -31,3 +31,8 @@ def register_exception_handlers(app: FastAPI):
     @app.exception_handler(InternalServerException)
     async def internal_server_handler(request: Request, exc: InternalServerException):
         return JSONResponse(status_code=500, content={"detail": exc.detail})
+
+    @app.exception_handler(Exception)
+    async def another_exception_handler(request: Request, exc: Exception):
+        return JSONResponse(status_code=500, content={"detail": str(exc)})
+

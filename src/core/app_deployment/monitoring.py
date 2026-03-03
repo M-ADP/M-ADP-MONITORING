@@ -4,7 +4,7 @@ from datetime import datetime
 from src.core.traffic.model import Traffic
 
 
-class MonitoringClient(ABC):
+class AppDeploymentMonitor(ABC):
 
     @abstractmethod
     async def traffic(

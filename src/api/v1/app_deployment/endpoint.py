@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Header, Depends
+from fastapi import APIRouter, Depends
 from src.api.v1.deps.get_app_deployment import get_app_deployment
 from src.app.app_deployment.get_traffic import GetAppDeploymentTrafficUseCase
 from src.common.schema.request import TrafficRangeRequest

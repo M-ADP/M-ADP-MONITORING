@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+from src.core.app_deployment.model import AppDeployment
 from src.core.traffic.model import Traffic
 
-
-class AppDeploymentMonitor(ABC):
+class AppDeploymentMonitoringClient(ABC):
 
     @abstractmethod
     async def traffic(
             self,
-            id : int,
+            app_deployment : AppDeployment,
             start: datetime,
             end: datetime,
     ) -> Traffic:

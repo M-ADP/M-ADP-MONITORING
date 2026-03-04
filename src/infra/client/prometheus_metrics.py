@@ -33,7 +33,7 @@ class PrometheusMetrics(MetricsClient):
 
     def __init__(
             self,
-            config: PrometheusConfig,
+            config: PrometheusConfig = PrometheusConfig(),
             requester: Requester = get_requester(),
     ):
         self.requester = requester

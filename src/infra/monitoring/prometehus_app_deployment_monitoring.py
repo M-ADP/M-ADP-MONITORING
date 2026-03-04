@@ -10,6 +10,10 @@ from src.infra.client.prometheus_metrics import PrometheusMetrics
 
 class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
 
+    # 총 요청 수 = istio_requests_total
+    #
+
+
     # TODO: 실제 메트릭명 확인 후 수정 예정
     _TRAFFIC_QUERY = (
         'sum(rate(istio_requests_total{{deployment_id="{deployment_id}"}}[1m]))'

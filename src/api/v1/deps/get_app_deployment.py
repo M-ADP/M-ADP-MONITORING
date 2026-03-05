@@ -1,6 +1,7 @@
 from fastapi import Path, Header, Depends
 from src.core.app_deployment.model import AppDeployment
 from src.core.client.app_deployment import AppDeploymentClient
+from src.dependencies.app_deployment_client import get_app_deployment_client
 
 
 async def get_app_deployment(

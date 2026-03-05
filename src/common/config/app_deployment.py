@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings
-
 from src.common.const.vault import VAULT_ENV_FILE
 
 

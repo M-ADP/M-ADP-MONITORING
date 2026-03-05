@@ -1,12 +1,15 @@
-from fastapi import Path, Header
+from fastapi import Path, Header, Depends
 from src.core.app_deployment.model import AppDeployment
+from src.core.client.app_deployment import AppDeploymentClient
 
 
 async def get_app_deployment(
         app_deployment_id : int = Path(...),
-        user_id: int = Header(..., alias="user-id")
+        user_id: int = Header(..., alias="X-User-Id"),
+        app_deployment_client : AppDeploymentClient = Depends(get_app_deployment_client),
 ) -> AppDeployment:
-    return AppDeployment(
-        id=app_deployment_id,
-        owner_id=user_id
+
+    return await app_deployment_client.get(
+        user_id=user_id,
+        app_deployment_id=app_deployment_id
     )

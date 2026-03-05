@@ -14,9 +14,8 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
     #
 
 
-    # TODO: 실제 메트릭명 확인 후 수정 예정
     _TRAFFIC_QUERY = (
-        'sum(rate(istio_requests_total{{deployment_id="{deployment_id}"}}[1m]))'
+        'sum(rate(istio_requests_total{{x-app-deployment-id:="{app_deployment_id}"}}[1m]))'
     )
 
     def __init__(
@@ -33,7 +32,12 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
     ) -> Traffic:
         ql = self._TRAFFIC_QUERY.format(deployment_id=app_deployment.id)
         step = self._auto_step(start, end)
-        data = await self.metrics_client.query_range(ql=ql, start=start, end=end, step=step)
+        data = await self.metrics_client.query_range(
+            ql=ql,
+            start=start,
+            end=end,
+            step=step
+        )
         series = self._parse_series(data)
         return Traffic(
             id=app_deployment.id,

@@ -3,5 +3,5 @@ from src.infra.client.app_deployment import AppDeploymentClientImpl
 
 
 async def get_app_deployment_client() -> AppDeploymentClient:
-    return FakeAppDeploymentClient()
-#    return AppDeploymentClientImpl()
+    # return FakeAppDeploymentClient()
+    return AppDeploymentClientImpl()

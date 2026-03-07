@@ -31,7 +31,7 @@ class AppDeploymentClientImpl(AppDeploymentClient):
         }
 
         response = await self.requester.get(
-            url=self.base_url,
+            url=f"{self.base_url}/status",
             headers=headers,
             params=params,
         )

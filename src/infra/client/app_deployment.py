@@ -18,18 +18,35 @@ class AppDeploymentClientImpl(AppDeploymentClient):
     async def get(
             self,
             user_id: int,
-            app_deployment_id: int
+            project_id: int,
+            app_deployment_name: str
     ) -> AppDeployment:
         headers = {
             "X-User-Id": user_id,
         }
 
+        params = {
+            "project_id": str(project_id),
+            "app_name": app_deployment_name,
+        }
+
         response = await self.requester.get(
             url=self.base_url,
             headers=headers,
+            params=params,
         )
 
+        app_deployment_response = response['data']
+
         return AppDeployment(
-            id=response['id'],
-            owner_id=response['user_id']
+            id=app_deployment_response['id'],
+            name=app_deployment_name,
+            owner_id=app_deployment_response['user_id'],
+            cpu_usage_percentage=app_deployment_response['cpu_usage_percentage'],
+            memory_used=app_deployment_response['memory_used'],
+            memory_total=app_deployment_response['memory_total'],
+            disk_used=app_deployment_response['disk_used'],
+            disk_total=app_deployment_response['disk_total'],
+            current_instance=app_deployment_response['current_instance'],
+            available_instances=app_deployment_response['available_instances'],
         )

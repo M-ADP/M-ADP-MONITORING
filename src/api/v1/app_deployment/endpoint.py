@@ -12,7 +12,7 @@ app_deployment_router = APIRouter(
     tags=["app-deployment"]
 )
 
-@app_deployment_router.get("/{app_deployment_id}")
+@app_deployment_router.get("/{project_id}/{app_deployment_name}")
 async def get_app_deployment_traffic(
         app_deployment: AppDeployment = Depends(get_app_deployment),
         traffic_range: TrafficRangeRequest = Depends(),

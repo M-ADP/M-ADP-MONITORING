@@ -39,9 +39,9 @@ class AppDeploymentClientImpl(AppDeploymentClient):
         app_deployment_response = response['data']
 
         return AppDeployment(
-            id=app_deployment_response['id'],
+            id=app_deployment_response['app_id'],
             name=app_deployment_name,
-            owner_id=app_deployment_response['user_id'],
+            owner_id=user_id,
             cpu_usage_percentage=app_deployment_response['cpu_usage_percentage'],
             memory_used=app_deployment_response['memory_used'],
             memory_total=app_deployment_response['memory_total'],

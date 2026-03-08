@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from pprint import pprint
 from typing import Any
 
 from src.core.app_deployment.model import AppDeployment
@@ -38,7 +39,12 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
             end=end,
             step=step
         )
+        pprint(data)
+
+        print("-" * 30 + "시리즈 파싱" + "-" * 30)
         series = self._parse_series(data)
+
+        pprint(series)
         return Traffic(
             id=app_deployment.id,
             start=start,

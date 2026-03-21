@@ -5,10 +5,10 @@ from pydantic import BaseModel, model_validator
 
 class TrafficRangeRequest(BaseModel):
     start: datetime = Query(
-        datetime.now()
+        default_factory=lambda: datetime.now() - timedelta(hours=1)
     )
     end: datetime = Query(
-        default_factory=lambda: datetime.now() + timedelta(days=7) # 일주일 뒤
+        default_factory=datetime.now
     )
 
     @model_validator(mode="after")

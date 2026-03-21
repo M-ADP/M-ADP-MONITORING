@@ -31,7 +31,7 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
             start: datetime,
             end: datetime,
     ) -> Traffic:
-        ql = self._TRAFFIC_QUERY.format(deployment_id=app_deployment.id)
+        ql = self._TRAFFIC_QUERY.format(app_deployment_id=app_deployment.id)
         step = self._auto_step(start, end)
         data = await self.metrics_client.query_range(
             ql=ql,

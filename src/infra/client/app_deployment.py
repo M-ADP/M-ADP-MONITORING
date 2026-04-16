@@ -22,7 +22,7 @@ class AppDeploymentClientImpl(AppDeploymentClient):
             app_deployment_name: str
     ) -> AppDeployment:
         headers = {
-            "X-User-Id": user_id,
+            "X-User-Id": str(user_id),
         }
 
         params = {

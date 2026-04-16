@@ -22,3 +22,9 @@ class ResourceMetricsResponse(BaseModel):
     cpu: list[MetricPointResponse] = []
     memory: list[MetricPointResponse] = []
     disk: list[MetricPointResponse] = []
+
+
+class UserMetricsResponse(BaseModel):
+    dau: int
+    wau: int
+    mau: int

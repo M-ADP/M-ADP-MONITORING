@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime, timezone
 from typing import Any
 
-from src.core.app_deployment.model import AppDeployment, MetricPoint, NetworkMetrics, ResourceMetrics
+from src.core.app_deployment.model import AppDeployment, MetricPoint, NetworkMetrics, ResourceMetrics, UserMetrics
 from src.core.app_deployment.monitoring import AppDeploymentMonitoringClient
 from src.core.client.metrics import MetricsClient
 from src.infra.client.prometheus_metrics import PrometheusMetrics
@@ -29,6 +29,13 @@ _DISK_QUERY = (
     'sum(container_fs_usage_bytes{{x_app_deployment_id="{id}",container!=""}})'
 )
 
+_APP_USER_QUERY = (
+    'count(count by (x_user_id) (istio_requests_total{{x_app_deployment_id="{id}"}}[{range}]))'
+)
+_PROJECT_USER_QUERY = (
+    'count(count by (x_user_id) (istio_requests_total{{namespace="project-{id}"}}[{range}]))'
+)
+
 
 class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
 
@@ -45,9 +52,9 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
         sid = str(app_deployment.id)
 
         rps_data, code_data, lat_data = await asyncio.gather(
-            self._query(_TRAFFIC_RPS_QUERY.format(id=sid), start, end, step),
-            self._query(_TRAFFIC_BY_CODE_QUERY.format(id=sid), start, end, step),
-            self._query(_LATENCY_P95_QUERY.format(id=sid), start, end, step),
+            self._query_range(_TRAFFIC_RPS_QUERY.format(id=sid), start, end, step),
+            self._query_range(_TRAFFIC_BY_CODE_QUERY.format(id=sid), start, end, step),
+            self._query_range(_LATENCY_P95_QUERY.format(id=sid), start, end, step),
         )
 
         return NetworkMetrics(
@@ -68,9 +75,9 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
         sid = str(app_deployment.id)
 
         cpu_data, mem_data, disk_data = await asyncio.gather(
-            self._query(_CPU_QUERY.format(id=sid), start, end, step),
-            self._query(_MEMORY_QUERY.format(id=sid), start, end, step),
-            self._query(_DISK_QUERY.format(id=sid), start, end, step),
+            self._query_range(_CPU_QUERY.format(id=sid), start, end, step),
+            self._query_range(_MEMORY_QUERY.format(id=sid), start, end, step),
+            self._query_range(_DISK_QUERY.format(id=sid), start, end, step),
         )
 
         return ResourceMetrics(
@@ -81,7 +88,42 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
             disk=self._parse_flat(disk_data),
         )
 
-    async def _query(self, ql: str, start: datetime, end: datetime, step: int) -> dict:
+    async def app_users(self, app_deployment: AppDeployment) -> UserMetrics:
+        sid = str(app_deployment.id)
+        now = datetime.now(timezone.utc)
+
+        dau_data, wau_data, mau_data = await asyncio.gather(
+            self._query(_APP_USER_QUERY.format(id=sid, range="24h"), now),
+            self._query(_APP_USER_QUERY.format(id=sid, range="7d"), now),
+            self._query(_APP_USER_QUERY.format(id=sid, range="30d"), now),
+        )
+
+        return UserMetrics(
+            dau=self._parse_scalar(dau_data),
+            wau=self._parse_scalar(wau_data),
+            mau=self._parse_scalar(mau_data),
+        )
+
+    async def project_users(self, project_id: int) -> UserMetrics:
+        sid = str(project_id)
+        now = datetime.now(timezone.utc)
+
+        dau_data, wau_data, mau_data = await asyncio.gather(
+            self._query(_PROJECT_USER_QUERY.format(id=sid, range="24h"), now),
+            self._query(_PROJECT_USER_QUERY.format(id=sid, range="7d"), now),
+            self._query(_PROJECT_USER_QUERY.format(id=sid, range="30d"), now),
+        )
+
+        return UserMetrics(
+            dau=self._parse_scalar(dau_data),
+            wau=self._parse_scalar(wau_data),
+            mau=self._parse_scalar(mau_data),
+        )
+
+    async def _query(self, ql: str, ts: datetime) -> dict:
+        return await self.metrics_client.query(ql=ql, ts=ts)
+
+    async def _query_range(self, ql: str, start: datetime, end: datetime, step: int) -> dict:
         return await self.metrics_client.query_range(ql=ql, start=start, end=end, step=step)
 
     @staticmethod
@@ -100,6 +142,14 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
                 ))
         points.sort(key=lambda p: p.timestamp)
         return points
+
+    @staticmethod
+    def _parse_scalar(data: dict[str, Any]) -> int:
+        results = data.get("result", [])
+        if not results:
+            return 0
+        # result_type이 "vector"인 경우 첫 번째 요소의 value[1]을 반환
+        return int(float(results[0].get("value", [0, 0])[1]))
 
     @staticmethod
     def _parse_by_label(data: dict[str, Any], label: str) -> dict[str, list[MetricPoint]]:

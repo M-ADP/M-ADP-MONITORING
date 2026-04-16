@@ -29,3 +29,10 @@ class ResourceMetrics:
     cpu: list[MetricPoint] = field(default_factory=list)
     memory: list[MetricPoint] = field(default_factory=list)
     disk: list[MetricPoint] = field(default_factory=list)
+
+
+@dataclass
+class UserMetrics:
+    dau: int  # 최근 24h 고유 사용자
+    wau: int  # 최근 7d 고유 사용자
+    mau: int  # 최근 30d 고유 사용자

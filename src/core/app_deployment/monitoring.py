@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from src.core.app_deployment.model import AppDeployment, NetworkMetrics, ResourceMetrics
+from src.core.app_deployment.model import AppDeployment, NetworkMetrics, ResourceMetrics, UserMetrics
 
 
 class AppDeploymentMonitoringClient(ABC):
@@ -22,4 +22,12 @@ class AppDeploymentMonitoringClient(ABC):
             start: datetime,
             end: datetime,
     ) -> ResourceMetrics:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def app_users(self, app_deployment: AppDeployment) -> UserMetrics:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def project_users(self, project_id: int) -> UserMetrics:
         raise NotImplementedError

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Header, Path
 
+from src.core.app_deployment.model import AppDeployment
 from src.api.v1.app_deployment.shema.response import (
     MetricPointResponse,
     NetworkMetricsResponse,
@@ -24,7 +25,7 @@ async def get_traffic(
         usecase: GetAppDeploymentTrafficUseCase = Depends(GetAppDeploymentTrafficUseCase),
 ) -> MadpResponse[NetworkMetricsResponse]:
     result = await usecase(
-        app_deployment_id=app_deployment_id,
+        app_deployment=AppDeployment(id=app_deployment_id),
         traffic_range=traffic_range,
     )
 
@@ -55,7 +56,7 @@ async def get_resource(
         usecase: GetAppDeploymentResourceUseCase = Depends(GetAppDeploymentResourceUseCase),
 ) -> MadpResponse[ResourceMetricsResponse]:
     result = await usecase(
-        app_deployment_id=app_deployment_id,
+        app_deployment=AppDeployment(id=app_deployment_id),
         traffic_range=traffic_range,
     )
 

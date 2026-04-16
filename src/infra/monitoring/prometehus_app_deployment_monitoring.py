@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-from pprint import pprint
 from typing import Any
 
 from src.core.app_deployment.model import AppDeployment
@@ -11,12 +10,8 @@ from src.infra.client.prometheus_metrics import PrometheusMetrics
 
 class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
 
-    # 총 요청 수 = istio_requests_total
-    #
-
-
     _TRAFFIC_QUERY = (
-        'sum(rate(istio_requests_total{{x-app-deployment-id:="{app_deployment_id}"}}[1m]))'
+        'sum(rate(istio_requests_total{{x-app-deployment-id="{app_deployment_id}"}}[1m]))'
     )
 
     def __init__(
@@ -37,24 +32,18 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
             ql=ql,
             start=start,
             end=end,
-            step=step
+            step=step,
         )
-        pprint(data)
 
-        print("-" * 30 + "시리즈 파싱" + "-" * 30)
-        series = self._parse_series(data)
-
-        pprint(series)
         return Traffic(
             id=app_deployment.id,
             start=start,
             end=end,
-            series=series,
+            series=self._parse_series(data),
         )
 
     @staticmethod
     def _auto_step(start: datetime, end: datetime) -> int:
-        """시간 범위에서 step(초)을 자동 계산 — 약 300 포인트, 최소 15초"""
         duration_seconds = (end - start).total_seconds()
         return max(15, int(duration_seconds / 300))
 

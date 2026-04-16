@@ -1,16 +1,25 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from src.core.app_deployment.model import AppDeployment
-from src.core.traffic.model import Traffic
+from src.core.app_deployment.model import AppDeployment, NetworkMetrics, ResourceMetrics
+
 
 class AppDeploymentMonitoringClient(ABC):
 
     @abstractmethod
-    async def traffic(
+    async def network(
             self,
-            app_deployment : AppDeployment,
+            app_deployment: AppDeployment,
             start: datetime,
             end: datetime,
-    ) -> Traffic:
+    ) -> NetworkMetrics:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def resource(
+            self,
+            app_deployment: AppDeployment,
+            start: datetime,
+            end: datetime,
+    ) -> ResourceMetrics:
         raise NotImplementedError

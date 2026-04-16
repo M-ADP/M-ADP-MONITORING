@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, Header, Path
 
-from src.api.v1.perform_ops.schema.response import (
+from src.api.v1.app_deployment.shema.response import (
     MetricPointResponse,
     NetworkMetricsResponse,
     ResourceMetricsResponse,
 )
-from src.app.perform_ops.get_perform_ops import GetNetworkMetricsUseCase, GetResourceMetricsUseCase
+from src.app.app_deployment.get_traffic import GetAppDeploymentTrafficUseCase, GetAppDeploymentResourceUseCase
 from src.common.schema.request import TrafficRangeRequest
 from src.common.schema.response import MadpResponse
 
@@ -21,7 +21,7 @@ async def get_traffic(
         app_deployment_id: int = Path(...),
         user_id: int = Header(..., alias="X-User-Id"),
         traffic_range: TrafficRangeRequest = Depends(),
-        usecase: GetNetworkMetricsUseCase = Depends(GetNetworkMetricsUseCase),
+        usecase: GetAppDeploymentTrafficUseCase = Depends(GetAppDeploymentTrafficUseCase),
 ) -> MadpResponse[NetworkMetricsResponse]:
     result = await usecase(
         app_deployment_id=app_deployment_id,
@@ -52,7 +52,7 @@ async def get_resource(
         app_deployment_id: int = Path(...),
         user_id: int = Header(..., alias="X-User-Id"),
         traffic_range: TrafficRangeRequest = Depends(),
-        usecase: GetResourceMetricsUseCase = Depends(GetResourceMetricsUseCase),
+        usecase: GetAppDeploymentResourceUseCase = Depends(GetAppDeploymentResourceUseCase),
 ) -> MadpResponse[ResourceMetricsResponse]:
     result = await usecase(
         app_deployment_id=app_deployment_id,

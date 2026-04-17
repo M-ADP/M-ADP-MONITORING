@@ -4,7 +4,16 @@ from datetime import datetime
 
 @dataclass
 class AppDeployment:
-    id: int
+    id: int | str
+    name: str | None = None
+    owner_id: int | None = None
+    cpu_usage_percentage: float | None = None
+    memory_used: int | None = None
+    memory_total: int | None = None
+    disk_used: int | None = None
+    disk_total: int | None = None
+    current_instance: int | None = None
+    available_instances: int | None = None
 
 
 @dataclass

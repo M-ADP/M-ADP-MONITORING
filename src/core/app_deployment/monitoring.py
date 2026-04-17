@@ -29,5 +29,5 @@ class AppDeploymentMonitoringClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def project_users(self, project_id: int) -> UserMetrics:
+    async def project_users(self, project_id: int | str) -> UserMetrics:
         raise NotImplementedError

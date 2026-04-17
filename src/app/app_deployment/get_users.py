@@ -28,5 +28,5 @@ class GetProjectUsersUseCase(BaseUseCase):
     ) -> None:
         self.monitoring_client = monitoring_client
 
-    async def __call__(self, project_id: int) -> UserMetrics:
+    async def __call__(self, project_id: int | str) -> UserMetrics:
         return await self.monitoring_client.project_users(project_id=project_id)

@@ -104,7 +104,7 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
             mau=self._parse_scalar(mau_data),
         )
 
-    async def project_users(self, project_id: int) -> UserMetrics:
+    async def project_users(self, project_id: int | str) -> UserMetrics:
         sid = str(project_id)
         now = datetime.now(timezone.utc)
 

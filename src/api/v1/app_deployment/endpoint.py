@@ -31,8 +31,8 @@ project_router = APIRouter(
 
 @app_deployment_router.get("/{project_id}/{app_deployment_id}/users")
 async def get_app_users(
-    project_id: int = Path(...),
-    app_deployment_id: int = Path(...),
+    project_id: str = Path(...),
+    app_deployment_id: str = Path(...),
     user_id: int = Header(..., alias="X-User-Id"),
     usecase: GetAppDeploymentUsersUseCase = Depends(GetAppDeploymentUsersUseCase),
 ) -> MadpResponse[UserMetricsResponse]:
@@ -50,7 +50,7 @@ async def get_app_users(
 
 @project_router.get("/{project_id}/users")
 async def get_project_users(
-    project_id: int = Path(...),
+    project_id: str = Path(...),
     user_id: int = Header(..., alias="X-User-Id"),
     usecase: GetProjectUsersUseCase = Depends(GetProjectUsersUseCase),
 ) -> MadpResponse[UserMetricsResponse]:
@@ -68,8 +68,8 @@ async def get_project_users(
 
 @app_deployment_router.get("/{project_id}/{app_deployment_id}/traffic")
 async def get_traffic(
-    project_id: int = Path(...),
-    app_deployment_id: int = Path(...),
+    project_id: str = Path(...),
+    app_deployment_id: str = Path(...),
     user_id: int = Header(..., alias="X-User-Id"),
     traffic_range: TrafficRangeRequest = Depends(),
     usecase: GetAppDeploymentTrafficUseCase = Depends(GetAppDeploymentTrafficUseCase),
@@ -100,8 +100,8 @@ async def get_traffic(
 
 @app_deployment_router.get("/{project_id}/{app_deployment_id}/resource")
 async def get_resource(
-    project_id: int = Path(...),
-    app_deployment_id: int = Path(...),
+    project_id: str = Path(...),
+    app_deployment_id: str = Path(...),
     user_id: int = Header(..., alias="X-User-Id"),
     traffic_range: TrafficRangeRequest = Depends(),
     usecase: GetAppDeploymentResourceUseCase = Depends(GetAppDeploymentResourceUseCase),

@@ -20,20 +20,20 @@ _LATENCY_P95_QUERY = (
     ' (rate(istio_request_duration_milliseconds_bucket{{x_app_deployment_id="{id}"}}[1m])))'
 )
 _CPU_QUERY = (
-    'sum(rate(container_cpu_usage_seconds_total{{x_app_deployment_id="{id}",container!=""}}[1m]))'
+    'sum(rate(container_cpu_usage_seconds_total{{namespace="project-{project_id}",container!=""}}[1m]))'
 )
 _MEMORY_QUERY = (
-    'sum(container_memory_working_set_bytes{{x_app_deployment_id="{id}",container!=""}})'
+    'sum(container_memory_working_set_bytes{{namespace="project-{project_id}",container!=""}})'
 )
 _DISK_QUERY = (
-    'sum(container_fs_usage_bytes{{x_app_deployment_id="{id}",container!=""}})'
+    'sum(container_fs_usage_bytes{{namespace="project-{project_id}",container!=""}})'
 )
 
 _APP_USER_QUERY = (
-    'count(count by (x_user_id) (istio_requests_total{{x_app_deployment_id="{id}"}}[{range}]))'
+    'count(count by (x_user_id) (increase(istio_requests_total{{x_app_deployment_id="{id}"}}[{range}]) > 0))'
 )
 _PROJECT_USER_QUERY = (
-    'count(count by (x_user_id) (istio_requests_total{{namespace="project-{id}"}}[{range}]))'
+    'count(count by (x_user_id) (increase(istio_requests_total{{namespace="project-{id}"}}[{range}]) > 0))'
 )
 
 
@@ -72,12 +72,12 @@ class PrometehusAppDeploymentMonitoring(AppDeploymentMonitoringClient):
             end: datetime,
     ) -> ResourceMetrics:
         step = self._auto_step(start, end)
-        sid = str(app_deployment.id)
+        project_id = str(app_deployment.project_id)
 
         cpu_data, mem_data, disk_data = await asyncio.gather(
-            self._query_range(_CPU_QUERY.format(id=sid), start, end, step),
-            self._query_range(_MEMORY_QUERY.format(id=sid), start, end, step),
-            self._query_range(_DISK_QUERY.format(id=sid), start, end, step),
+            self._query_range(_CPU_QUERY.format(project_id=project_id), start, end, step),
+            self._query_range(_MEMORY_QUERY.format(project_id=project_id), start, end, step),
+            self._query_range(_DISK_QUERY.format(project_id=project_id), start, end, step),
         )
 
         return ResourceMetrics(

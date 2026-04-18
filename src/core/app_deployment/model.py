@@ -5,6 +5,7 @@ from datetime import datetime
 @dataclass
 class AppDeployment:
     id: int | str
+    project_id: int | str | None = None
     name: str | None = None
     owner_id: int | None = None
     cpu_usage_percentage: float | None = None

@@ -36,7 +36,7 @@ async def get_app_users(
     user_id: int = Header(..., alias="X-User-Id"),
     usecase: GetAppDeploymentUsersUseCase = Depends(GetAppDeploymentUsersUseCase),
 ) -> MadpResponse[UserMetricsResponse]:
-    result = await usecase(app_deployment=AppDeployment(id=app_deployment_id))
+    result = await usecase(app_deployment=AppDeployment(id=app_deployment_id, project_id=project_id))
 
     return MadpResponse(
         message="고유 사용자 조회 성공",
@@ -75,7 +75,7 @@ async def get_traffic(
     usecase: GetAppDeploymentTrafficUseCase = Depends(GetAppDeploymentTrafficUseCase),
 ) -> MadpResponse[NetworkMetricsResponse]:
     result = await usecase(
-        app_deployment=AppDeployment(id=app_deployment_id),
+        app_deployment=AppDeployment(id=app_deployment_id, project_id=project_id),
         traffic_range=traffic_range,
     )
 
@@ -107,7 +107,7 @@ async def get_resource(
     usecase: GetAppDeploymentResourceUseCase = Depends(GetAppDeploymentResourceUseCase),
 ) -> MadpResponse[ResourceMetricsResponse]:
     result = await usecase(
-        app_deployment=AppDeployment(id=app_deployment_id),
+        app_deployment=AppDeployment(id=app_deployment_id, project_id=project_id),
         traffic_range=traffic_range,
     )
 

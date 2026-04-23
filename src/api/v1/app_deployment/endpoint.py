@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header, Path
+from fastapi import APIRouter, Depends, Path
 
 from src.core.app_deployment.model import AppDeployment
 from src.api.v1.app_deployment.shema.response import (
@@ -33,7 +33,6 @@ project_router = APIRouter(
 async def get_app_users(
     project_id: str = Path(...),
     app_deployment_id: str = Path(...),
-    user_id: int = Header(..., alias="X-User-Id"),
     usecase: GetAppDeploymentUsersUseCase = Depends(GetAppDeploymentUsersUseCase),
 ) -> MadpResponse[UserMetricsResponse]:
     result = await usecase(app_deployment=AppDeployment(id=app_deployment_id, project_id=project_id))
@@ -51,7 +50,6 @@ async def get_app_users(
 @project_router.get("/{project_id}/users")
 async def get_project_users(
     project_id: str = Path(...),
-    user_id: int = Header(..., alias="X-User-Id"),
     usecase: GetProjectUsersUseCase = Depends(GetProjectUsersUseCase),
 ) -> MadpResponse[UserMetricsResponse]:
     result = await usecase(project_id=project_id)
@@ -70,7 +68,6 @@ async def get_project_users(
 async def get_traffic(
     project_id: str = Path(...),
     app_deployment_id: str = Path(...),
-    user_id: int = Header(..., alias="X-User-Id"),
     traffic_range: TrafficRangeRequest = Depends(),
     usecase: GetAppDeploymentTrafficUseCase = Depends(GetAppDeploymentTrafficUseCase),
 ) -> MadpResponse[NetworkMetricsResponse]:
@@ -102,7 +99,6 @@ async def get_traffic(
 async def get_resource(
     project_id: str = Path(...),
     app_deployment_id: str = Path(...),
-    user_id: int = Header(..., alias="X-User-Id"),
     traffic_range: TrafficRangeRequest = Depends(),
     usecase: GetAppDeploymentResourceUseCase = Depends(GetAppDeploymentResourceUseCase),
 ) -> MadpResponse[ResourceMetricsResponse]:

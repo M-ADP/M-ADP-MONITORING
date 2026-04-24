@@ -10,3 +10,8 @@ wheels/
 .venv
 .claude
 .idea
+
+# Local dev only
+docker-compose.yml
+prometheus.yml
+.env
